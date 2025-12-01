@@ -1,0 +1,69 @@
+library(dplyr)
+library(tidyr)
+
+
+
+df <- read.csv("laptops.csv", na.strings = c("", "NA"))
+
+# PRE-CLEANING:
+# Replace missing numeric or text values
+df_clean <- df %>%
+  mutate(
+    price = replace_na(price, 0),
+    ratings = replace_na(ratings, 0),
+    specs_score = replace_na(specs_score, 0),
+    os = replace_na(os, "Unknown"),
+    processor = replace_na(processor, "Unknown")
+  )
+
+print("--- Cleaned Baseline Data ---")
+print(head(df_clean))
+
+
+
+df_calc <- df_clean %>%
+  mutate(
+    discount_amount = price * 0.10,
+    final_price = price - discount_amount
+  )
+
+print("--- Method A: Arithmetic Results ---")
+print(df_calc %>% select(name, brand, price, final_price))
+
+
+
+df_logic <- df_clean %>%
+  mutate(
+    Rating_Label = ifelse(ratings > 4.0, "Excellent", "Average"),
+    Specs_Category = ifelse(specs_score >= 70, "High-End", "Mid/Low Range")
+  )
+
+print("--- Method B: Conditional Logic Results ---")
+print(df_logic %>% select(name, ratings, Rating_Label, specs_score, Specs_Category))
+
+
+
+df_text <- df_clean %>%
+  mutate(
+    Phone_Summary = paste(name, "by", brand, 
+                          "runs on", os, 
+                          "with a", processor, 
+                          "processor and costs ₹", price)
+  )
+
+print("--- Method C: Text Transformation ---")
+print(head(df_text$Phone_Summary))
+
+
+
+final_dataset <- df_clean %>%
+  mutate(
+    final_price = price - (price * 0.10),
+    High_Value = ifelse(final_price > 20000, TRUE, FALSE),
+    Status_Report = paste0("Rating: ", ratings, 
+                           " | Specs: ", specs_score, 
+                           " | OS: ", os)
+  )
+
+print("--- Final Combined Dataset ---")
+print(head(final_dataset))
