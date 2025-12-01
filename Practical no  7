@@ -1,0 +1,45 @@
+library(dplyr)
+library(readr)
+
+fastfood <- read_csv("fast_food_ordering_dataset.csv")
+
+print("--- Original Dataset (First 3 rows) ---")
+print(head(fastfood, 3))
+
+selected_cols <- fastfood %>%
+  select(order_id, order_value)
+
+print("--- Selected Specific Columns ---")
+print(head(selected_cols, 3))
+
+range_cols <- fastfood %>%
+  select(city:cuisine_type)
+
+print("--- Selected Range of Columns (age to satisfaction) ---")
+print(head(range_cols, 3))
+
+starts_with_o <- fastfood %>%
+  select(starts_with("o"))
+
+print("--- Selected Columns Starting with 'o' ---")
+print(head(starts_with_o, 3))
+
+dropped_one <- fastfood %>%
+  select(-delivery_time_minutes)
+
+print("--- Dataset with 'delivery_time_minutes' Dropped ---")
+print(names(dropped_one))
+
+dropped_multiple <- fastfood %>%
+  select(-order_value, -city)
+
+print("--- Dataset with Multiple Columns Dropped ---")
+print(names(dropped_multiple))
+
+dropped_range <- fastfood %>%
+  select(-(order_time:cuisine_type))
+
+print("--- Dataset with Range (order_time to cuisine_type) Dropped ---")
+print(names(dropped_range))
+
+
