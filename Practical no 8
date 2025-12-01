@@ -1,0 +1,39 @@
+library(readr)
+library(dplyr)
+library(tidyr)
+
+car_df <- read_csv("BMW sales data (2010-2024) (1).csv",
+                   na = c("", "NA"))
+
+print("--- Original Data ---")
+print(head(car_df))
+
+print("--- Missing Values per Column ---")
+print(colSums(is.na(car_df)))
+
+# Create clean_omit
+clean_omit <- na.omit(car_df)
+
+print("--- After Removing Rows with NA ---")
+print(paste("Original rows:", nrow(car_df)))
+print(paste("Remaining rows:", nrow(clean_omit)))
+print(head(clean_omit))
+
+
+
+clean_replace <- car_df %>%       
+  replace_na(list(
+    Model = "Unknown",
+    Year = mean(car_df$Year, na.rm = TRUE),
+    Region = "Unknown",
+    Color = "Unknown",
+    Fuel_Type = "Unknown",
+    Transmission = "Unknown",
+    Mileage_KM = mean(car_df$Mileage_KM, na.rm = TRUE)
+  ))
+
+print("--- 3. After Replacing Missing Values (replace_na) ---")
+print(head(clean_replace, 6))
+
+print("--- Remaining NAs After Replacement ---")
+print(colSums(is.na(clean_replace)))
