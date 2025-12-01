@@ -1,0 +1,41 @@
+Practical no 6 
+
+library(dplyr)  # for bind_rows
+
+
+
+fraud <- read_csv("synthetic_fraud_dataset.csv")
+
+print("--- Fraud Dataset ---")
+print(head(fraud))
+
+
+fraud_A <- fraud[1:5000, ]   
+fraud_B <- fraud[5001:10000, ]  
+
+print("--- Fraud_A (First Part) ---")
+print(head(fraud_A))
+print("--- Fraud_B (Second Part) ---")
+print(head(fraud_B))
+
+
+merged_data <- merge(
+  fraud_A,
+  fraud_B,
+  by = "transaction_id",
+  suffixes = c("_A", "_B")
+)
+
+print("--- Merged Data (Columns Added) ---")
+print(head(merged_data))
+
+
+
+
+fraud_A$Group <- "A"
+fraud_B$Group <- "B"
+
+combined_data <- bind_rows(fraud_A, fraud_B)
+
+print("--- Combined Data (Rows Added from A & B) ---")
+print(head(combined_data))
