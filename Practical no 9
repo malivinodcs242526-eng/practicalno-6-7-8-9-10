@@ -1,0 +1,60 @@
+library(stringr)
+library(tidyr)
+library(dplyr)
+library(readr)
+
+
+nobel_df <- read_csv("nobel_prizes_1901-2025_cleaned.csv", 
+                     na = c("", "NA"))
+
+print("--- Original Nobel Dataset (First 6 Rows) ---")
+print(head(nobel_df, 6))
+
+
+
+
+# Example A: Extract first 4 digits of award_year
+nobel_df$Award_Year_Short <- str_sub(nobel_df$award_year, 1, 4)
+
+# Example B: Extract only the month from date_awarded (YYYY-MM-DD)
+# position 6 to 7 → Month ("MM")
+nobel_df$Award_Month <- str_sub(nobel_df$date_awarded, 6, 7)
+
+# Example C: Extract last 10 characters of motivation (ends with “…” sometimes)
+nobel_df$Motivation_End <- str_sub(nobel_df$motivation, -10, -1)
+
+print("--- Data after str_sub() Operations ---")
+print(nobel_df %>% select(award_year, date_awarded, Award_Year_Short, Award_Month, Motivation_End))
+
+
+
+
+
+name_split <- str_split(nobel_df$full_name, " ", simplify = TRUE)
+
+# Assign first 2 words (if available)
+nobel_df$First_Name <- name_split[, 1]
+nobel_df$Last_Name  <- name_split[, ncol(name_split)]
+
+print("--- Data after str_split() for Names ---")
+print(nobel_df %>% select(full_name, First_Name, Last_Name))
+
+# Example B: Split motivation based on a comma
+mot_split <- str_split(nobel_df$motivation, ",", simplify = TRUE)
+
+nobel_df$Motiv_Part1 <- mot_split[, 1]
+nobel_df$Motiv_Part2 <- mot_split[, ncol(mot_split)]
+
+print("--- Data after spltting motivation text ---")
+print(nobel_df %>% select(motivation, Motiv_Part1, Motiv_Part2))
+
+
+
+
+# Separate date_awarded → year, month, day
+nobel_tidy <- nobel_df %>%
+  separate(date_awarded, into = c("Year", "Month", "Day"), sep = "-")
+
+print("--- Bonus: separate() applied to date_awarded ---")
+print(nobel_tidy %>% select(Year, Month, Day))
+
